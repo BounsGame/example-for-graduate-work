@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.config.WebSecurityConfig;
 import ru.skypro.homework.dto.NewPassword;
+import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
+import ru.skypro.homework.service.UserService;
 
 @Slf4j
 @RequestMapping("/Users")
@@ -26,6 +28,7 @@ import ru.skypro.homework.dto.User;
 public class UserController {
 
     private final WebSecurityConfig webSecurityConfig;
+    private final UserService userService;
 
     @Operation(summary = "Обновления пароля", tags = {"Пользователи"})
     @PostMapping("/set_password")
@@ -39,37 +42,38 @@ public class UserController {
             if (!webSecurityConfig.passwordEncoder().matches(password.getCurrentPassword(),currentUser.getPassword())){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("старый пароль введён не верно");
             }
-            //добавить метод смены пароля
+            userService.changePassword(password,currentUser);
             return ResponseEntity.ok("пароль успешно изменён");
         } else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("залогинься");
     }
 
     @Operation(summary = "Получение информации об авторизованном пользователе", tags = {"Пользователи"})
     @GetMapping("/me")
-    public ResponseEntity<?> getUser (){
+    public ResponseEntity<?> getUser (@AuthenticationPrincipal UserDetails currentUser){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)){
-            //добавить метод выдачи пользователя
-            return ResponseEntity.ok("пользователь выведен");
+            return ResponseEntity.ok(userService.getUser(currentUser));
         } else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("залогинься");
     }
 
     @Operation(summary = "Обновление информации об авторизованном пользователе", tags = {"Пользователи"})
     @PatchMapping("/me")
-    public ResponseEntity<?> updateUser(){
+    public ResponseEntity<?> updateUser(@AuthenticationPrincipal UserDetails currentUser,
+                                        @RequestBody UpdateUser updateUser){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)){
-            //добавить метод обновления данных
+            userService.updateUser(currentUser, updateUser);
             return ResponseEntity.ok("данные успешно обновлены");
         } else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("залогинься");
     }
 
     @Operation(summary = "Обновление аватара авторизованного пользователя", tags = {"Пользователи"})
     @PostMapping("/me/image")
-    public ResponseEntity<?> updateUserImage (@RequestParam("multipart/form-data") MultipartFile newAvatar){
+    public ResponseEntity<?> updateUserImage (@RequestParam("multipart/form-data") MultipartFile newAvatar,
+                                              @AuthenticationPrincipal UserDetails currentUser){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)){
-            //добавить метод обновления фото
+            userService.updateUserImage(currentUser,newAvatar);
             return ResponseEntity.ok("фото успешно обновлено");
         } else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("залогинься");
     }
