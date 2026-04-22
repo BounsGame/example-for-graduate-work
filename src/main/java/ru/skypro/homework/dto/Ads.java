@@ -5,15 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Size;
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Login {
-    @Size(min = 4, max = 32)
-    private String username;
-    @Size(min = 8, max = 16)
-    private String password;
+public class Ads {
+    private List<AdDTO> results;
+    private int count;
 }

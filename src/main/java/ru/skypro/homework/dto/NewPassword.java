@@ -11,9 +11,9 @@ import javax.validation.constraints.Size;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Login {
-    @Size(min = 4, max = 32)
-    private String username;
+public class NewPassword {
     @Size(min = 8, max = 16)
-    private String password;
+    private String currentPassword;
+    @Size(min = 8, max = 16)
+    private String newPassword;
 }
