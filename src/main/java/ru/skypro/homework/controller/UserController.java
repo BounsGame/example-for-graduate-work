@@ -41,7 +41,7 @@ public class UserController {
             if (!webSecurityConfig.passwordEncoder().matches(password.getCurrentPassword(),currentUser.getPassword())){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("старый пароль введён не верно");
             }
-            userService.changePassword(password,currentUser);
+            userService.changePassword(password);
             return ResponseEntity.ok("пароль успешно изменён");
         } else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("залогинься");
     }

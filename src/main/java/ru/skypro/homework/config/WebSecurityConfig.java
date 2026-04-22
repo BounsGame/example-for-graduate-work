@@ -1,19 +1,18 @@
 package ru.skypro.homework.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import ru.skypro.homework.dto.Role;
+import ru.skypro.homework.service.UserService;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebSecurityConfig {
 
     private static final String[] AUTH_WHITELIST = {
@@ -25,17 +24,7 @@ public class WebSecurityConfig {
             "/register"
     };
 
-    @Bean
-    public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user =
-                User.builder()
-                        .username("user@gmail.com")
-                        .password("password")
-                        .passwordEncoder(passwordEncoder::encode)
-                        .roles(Role.USER.name())
-                        .build();
-        return new InMemoryUserDetailsManager(user);
-    }
+    private UserService myUserDetailManager;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -49,7 +38,7 @@ public class WebSecurityConfig {
                                         .mvcMatchers("/ads/**", "/users/**")
                                         .authenticated())
                 .cors()
-                .and()
+                .and().userDetailsService(myUserDetailManager)
                 .httpBasic(withDefaults());
         return http.build();
     }
