@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Comment {
+public class CommentDTO {
 
     private long author;
     private String authorImage;

@@ -13,5 +13,5 @@ import java.util.List;
 @AllArgsConstructor
 public class Comments {
     private int count;
-    private List<Comment> results;
+    private List<CommentDTO> results;
 }

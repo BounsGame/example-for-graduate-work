@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.dto.AdDTO;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.entities.Ad;
@@ -12,7 +13,6 @@ import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.util.ImageUtil;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,18 +23,18 @@ public class AdService {
     private AdRepository adRepository;
     private UserRepository userRepository;
 
-    public Ad toEntity(ru.skypro.homework.dto.Ad DTO) {
+    public Ad toEntity(AdDTO DTO) {
         return Ad.builder().pk(DTO.getPk()).image(DTO.getImage()).title(DTO.getTitle()).price(DTO.getPrice())
                 .author(userRepository.getReferenceById(DTO.getAuthor())).build();
     }
 
-    public ru.skypro.homework.dto.Ad toDTO(Ad entity) {
-        return ru.skypro.homework.dto.Ad.builder().pk(entity.getPk()).image(entity.getImage())
+    public AdDTO toDTO(Ad entity) {
+        return AdDTO.builder().pk(entity.getPk()).image(entity.getImage())
                 .title(entity.getTitle()).price(entity.getPrice()).author(entity.getAuthor().getId()).build();
     }
 
-    public List<ru.skypro.homework.dto.Ad> toDTOList(List<Ad> ads) {
-        List<ru.skypro.homework.dto.Ad> DTOAd = new ArrayList<>();
+    public List<AdDTO> toDTOList(List<Ad> ads) {
+        List<AdDTO> DTOAd = new ArrayList<>();
         for (Ad ad : ads) {
             DTOAd.add(toDTO(ad));
         }
@@ -46,7 +46,7 @@ public class AdService {
         return new Ads(toDTOList(ads), ads.size());
     }
 
-    public ru.skypro.homework.dto.Ad getAd(Long id) {
+    public AdDTO getAd(Long id) {
         return toDTO(findAdById(id));
     }
 
@@ -69,7 +69,7 @@ public class AdService {
     }
 
     public void updatePost(long postId, CreateOrUpdateAd ad) {
-        ru.skypro.homework.entities.Ad bdAd = adRepository.getReferenceById(postId);
+        Ad bdAd = adRepository.getReferenceById(postId);
         bdAd.setTitle(ad.getTitle());
         bdAd.setPrice(ad.getPrice());
         bdAd.setDescription(ad.getDescription());

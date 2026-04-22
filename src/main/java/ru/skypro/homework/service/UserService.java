@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
-import ru.skypro.homework.entities.Ad;
+import ru.skypro.homework.dto.UserDTO;
 import ru.skypro.homework.entities.User;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.util.ImageUtil;
@@ -17,13 +17,13 @@ public class UserService {
 
     private UserRepository userRepository;
 
-    public User toEntity(ru.skypro.homework.dto.User DTO) {
+    public User toEntity(UserDTO DTO) {
         return User.builder().id(DTO.getId()).email(DTO.getEmail()).image(DTO.getImage()).phone(DTO.getPhone())
                 .role(DTO.getRole()).firstname(DTO.getFirstname()).lastname(DTO.getLastname()).build();
     }
 
-    public ru.skypro.homework.dto.User toDTO(User entity) {
-        return ru.skypro.homework.dto.User.builder().id(entity.getId()).email(entity.getEmail()).image(entity.getImage())
+    public UserDTO toDTO(User entity) {
+        return UserDTO.builder().id(entity.getId()).email(entity.getEmail()).image(entity.getImage())
                 .role(entity.getRole()).phone(entity.getPhone()).firstname(entity.getFirstname())
                 .lastname(entity.getLastname()).build();
     }
@@ -38,7 +38,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public ru.skypro.homework.dto.User getUser(UserDetails userDetails) {
+    public UserDTO getUser(UserDetails userDetails) {
         return toDTO(findByEmail(userDetails.getUsername()));
     }
 
